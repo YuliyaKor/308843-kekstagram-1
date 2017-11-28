@@ -1,9 +1,9 @@
 'use strict';
-//получить случайное число
+// получить случайное число
 var getRandom = function (min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
-//массив комментариев
+// массив комментариев
 var userComments = [
   'Всё отлично!',
   'В целом всё неплохо. Но не всё.',
@@ -17,7 +17,7 @@ var showPhoto = function (value) {
   var photos = [];
   for (var i = 0; i < value; i++) {
     photos.push({
-      url: "photos/" + (i + 1) + ".jpg",
+      url: 'photos/' + (i + 1) + '.jpg',
       likes: getRandom(15, 200),
       comments: userComments[getRandom(0, userComments.length - 1)]
     });
@@ -25,11 +25,11 @@ var showPhoto = function (value) {
   return photos;
 };
 var userPhotos = showPhoto(25);
-//шаблон
+// шаблон
 var similarPictureTemplate = document.querySelector('#picture-template').content;
-//элемент
+// элемент
 var similarPictureElement = document.querySelector('.pictures');
-//заполнение шаблона
+// заполнение шаблона
 var getPicture = function (picture) {
   var newPicture = similarPictureTemplate.cloneNode(true);
   newPicture.querySelector('img').src = picture.url;
@@ -37,7 +37,7 @@ var getPicture = function (picture) {
   newPicture.querySelector('.picture-comments').textContent = picture.comments;
   return newPicture;
 };
-//заполнение блока
+// заполнение блока
 var renderPicture = function () {
   var fragment = document.createDocumentFragment();
   for (var i = 0; i < userPhotos.length; i++) {
@@ -46,10 +46,10 @@ var renderPicture = function () {
   similarPictureElement.appendChild(fragment);
 };
 renderPicture();
-//показать элемент
+// показать элемент
 var openPicture = document.querySelector('.gallery-overlay');
 openPicture.classList.remove('hidden');
-//заполнить элемент данными
+// заполнить элемент данными
 var fillOpenPicture = function (count) {
   openPicture.querySelector('.gallery-overlay-image').src = userPhotos[count].url;
   openPicture.querySelector('.likes-count').textContent = userPhotos[count].likes;
