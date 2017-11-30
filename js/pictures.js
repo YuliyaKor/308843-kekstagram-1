@@ -12,7 +12,7 @@ var userComments = [
   'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
   'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'
 ];
-//масив случайных комментариев
+// масив случайных комментариев
 var randomComments = [
   [userComments[getRandom(0, userComments.length - 1)]],
   [userComments[getRandom(0, userComments.length - 1)], userComments[getRandom(0, userComments.length - 1)]]
