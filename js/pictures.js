@@ -12,6 +12,11 @@ var userComments = [
   'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
   'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'
 ];
+//масив случайных комментариев
+var randomComments = [
+  [userComments[getRandom(0, userComments.length - 1)]],
+  [userComments[getRandom(0, userComments.length - 1)], userComments[getRandom(0, userComments.length - 1)]]
+];
 // массив фотографий пользователей, вкл лайки, комментарии и фото
 var showPhoto = function (value) {
   var photos = [];
@@ -19,7 +24,7 @@ var showPhoto = function (value) {
     photos.push({
       url: 'photos/' + (i + 1) + '.jpg',
       likes: getRandom(15, 200),
-      comments: userComments[getRandom(0, userComments.length - 1)]
+      comments: randomComments[getRandom(0, randomComments.length - 1)]
     });
   }
   return photos;
@@ -34,7 +39,7 @@ var getPicture = function (picture) {
   var newPicture = similarPictureTemplate.cloneNode(true);
   newPicture.querySelector('img').src = picture.url;
   newPicture.querySelector('.picture-likes').textContent = picture.likes;
-  newPicture.querySelector('.picture-comments').textContent = picture.comments;
+  newPicture.querySelector('.picture-comments').textContent = picture.comments.length;
   return newPicture;
 };
 // заполнение блока
@@ -53,6 +58,6 @@ openPicture.classList.remove('hidden');
 var fillOpenPicture = function (count) {
   openPicture.querySelector('.gallery-overlay-image').src = userPhotos[count].url;
   openPicture.querySelector('.likes-count').textContent = userPhotos[count].likes;
-  openPicture.querySelector('.comments-count').textContent = userPhotos[count].comments;
+  openPicture.querySelector('.comments-count').textContent = userPhotos[count].comments.length;
 };
 fillOpenPicture(0);
