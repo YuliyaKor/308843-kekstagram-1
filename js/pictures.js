@@ -18,7 +18,7 @@ var randomComments = [
   [userComments[getRandom(0, userComments.length - 1)], userComments[getRandom(0, userComments.length - 1)]]
 ];
 // массив фотографий пользователей, вкл лайки, комментарии и фото
-var showPhoto = function (value) {
+var getPhotos = function (value) {
   var photos = [];
   for (var i = 0; i < value; i++) {
     photos.push({
@@ -29,7 +29,7 @@ var showPhoto = function (value) {
   }
   return photos;
 };
-var userPhotos = showPhoto(25);
+var userPhotos = getPhotos(25);
 // шаблон
 var similarPictureTemplate = document.querySelector('#picture-template').content;
 // элемент
@@ -43,21 +43,21 @@ var getPicture = function (picture) {
   return newPicture;
 };
 // заполнение блока
-var renderPicture = function () {
+var renderPictures = function () {
   var fragment = document.createDocumentFragment();
   for (var i = 0; i < userPhotos.length; i++) {
     fragment.appendChild(getPicture(userPhotos[i]));
   }
   similarPictureElement.appendChild(fragment);
 };
-renderPicture();
+renderPictures();
 // показать элемент
-var openPicture = document.querySelector('.gallery-overlay');
-openPicture.classList.remove('hidden');
+var galleryOverlay = document.querySelector('.gallery-overlay');
+galleryOverlay.classList.remove('hidden');
 // заполнить элемент данными
-var fillOpenPicture = function (count) {
-  openPicture.querySelector('.gallery-overlay-image').src = userPhotos[count].url;
-  openPicture.querySelector('.likes-count').textContent = userPhotos[count].likes;
-  openPicture.querySelector('.comments-count').textContent = userPhotos[count].comments.length;
+var fillgalleryOverlay = function (count) {
+  galleryOverlay.querySelector('.gallery-overlay-image').src = userPhotos[count].url;
+  galleryOverlay.querySelector('.likes-count').textContent = userPhotos[count].likes;
+  galleryOverlay.querySelector('.comments-count').textContent = userPhotos[count].comments.length;
 };
-fillOpenPicture(0);
+fillgalleryOverlay(0);
