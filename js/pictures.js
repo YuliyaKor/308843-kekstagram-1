@@ -35,6 +35,7 @@ var getPhotos = function (value) {
 var userPhotos = getPhotos(25);
 // шаблон
 var similarPictureTemplate = document.querySelector('#picture-template').content.querySelector('.picture');
+
 // элемент
 var similarPictureElement = document.querySelector('.pictures');
 // заполнение шаблона
@@ -88,6 +89,7 @@ var overlayOpenHandler = function () {
 var overlayCloseHandler = function () {
   galleryOverlay.classList.add('hidden');
   uploadOverlay.classList.add('hidden');
+
   document.removeEventListener('keydown', overlayEscHandler);
 };
 // закрыть окно кликом
