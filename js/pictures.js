@@ -164,7 +164,7 @@ var hashtagsValid = function () {
     if (tegSplit[i][0] !== '#') {
       return true;
     }
-    if (tegSplit[0].length > 20) {
+    if (tegSplit[i].length > 20) {
       return true;
     }
     for (var j = 0; j < length; j++) {
