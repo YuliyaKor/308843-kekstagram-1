@@ -56,13 +56,12 @@ var renderPictures = function () {
   similarPictureElement.appendChild(fragment);
 };
 var pictureClickHandler = function (i) {
-  var overlayOpenHandler = function (evt) {
+  return function (evt) {
     evt.preventDefault();
     galleryOverlay.classList.remove('hidden');
     document.addEventListener('keydown', overlayEscHandler);
     fillGalleryOverlay(userPhotos[i]);
   };
-  return overlayOpenHandler;
 };
 renderPictures();
 // окно с картинкой
@@ -78,11 +77,6 @@ var overlayEscHandler = function (evt) {
   if (evt.keyCode === ESC_KEYCODE) {
     overlayCloseHandler();
   }
-};
-// общая функция открыть окно
-var overlayOpenHandler = function () {
-  galleryOverlay.classList.remove('hidden');
-  document.addEventListener('keydown', overlayEscHandler);
 };
 // общая функция закрыть окно
 var overlayCloseHandler = function () {
@@ -104,7 +98,7 @@ var imageForm = document.querySelector('#upload-select-image');
 // поле загрузки файла
 var aploadFile = imageForm.querySelector('#upload-file');
 // форма кадрирования изображения
-var uploadOverlay= imageForm.querySelector('.upload-overlay');
+var uploadOverlay = imageForm.querySelector('.upload-overlay');
 // открытие формы кадрирования
 aploadFile.addEventListener('change', function () {
   uploadOverlay.classList.remove('hidden');
@@ -168,18 +162,18 @@ var hashtagsValid = function () {
       return true;
     }
     for (var j = 0; j < length; j++) {
-     if (tegSplit[i].toLowerCase() === tegSplit[j].toLowerCase() && i !== j) {
+      if (tegSplit[i].toLowerCase() === tegSplit[j].toLowerCase() && i !== j) {
         return true;
       }
     }
   }
   return false;
-}
+};
 
 var submitFormHandler = function (evt) {
   if (hashtagsValid() === true) {
     teg.style.borderColor = 'red';
     evt.preventDefault();
   }
-}
+};
 imageForm.addEventListener('submit', submitFormHandler);
