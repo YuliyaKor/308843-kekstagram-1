@@ -1,32 +1,34 @@
 'use strict';
 (function () {
   // получить случайное число
-  window.getRandom = function (min, max) {
+  var getRandom = function (min, max) {
     return Math.floor(Math.random() * (max - min)) + min;
   };
-  // закрыть окно Esc
-  window.overlayEscHandler = function (evt) {
-    if (evt.keyCode === window.ESC_KEYCODE) {
-      window.overlayCloseHandler();
+  // массив комментариев
+  var userComments = [
+    'Всё отлично!',
+    'В целом всё неплохо. Но не всё.',
+    'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.',
+    'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.',
+    'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
+    'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'
+  ];
+  // масив случайных комментариев
+  var randomComments = [
+    [userComments[getRandom(0, userComments.length)]],
+    [userComments[getRandom(0, userComments.length)], userComments[getRandom(0, userComments.length)]]
+  ];
+  // массив фотографий пользователей, вкл лайки, комментарии и фото
+  var getPhotos = function (value) {
+    var photos = [];
+    for (var i = 0; i < value; i++) {
+      photos.push({
+        url: 'photos/' + (i + 1) + '.jpg',
+        likes: getRandom(15, 200),
+        comments: randomComments[getRandom(0, randomComments.length)]
+      });
     }
+    return photos;
   };
-  // общая функция закрыть окно
-  window.overlayCloseHandler = function () {
-    window.galleryOverlay.classList.add('hidden');
-    window.uploadOverlay.classList.add('hidden');
-
-    document.removeEventListener('keydown', window.overlayEscHandler);
-  };
-  // обозначение клавиш
-  window.ESC_KEYCODE = 27;
-  window.ENTER_KEYCODE = 13;
-
-  // окно с картинкой
-  window.galleryOverlay = document.querySelector('.gallery-overlay');
-  // форма загрузки
-  window.imageForm = document.querySelector('#upload-select-image');
-  // поле загрузки файла
-  window.aploadFile = window.imageForm.querySelector('#upload-file');
-  // форма кадрирования изображения
-  window.uploadOverlay = window.imageForm.querySelector('.upload-overlay');
+  window.userPhotos = getPhotos(25);
 })();

@@ -1,18 +1,30 @@
 'use strict';
 (function () {
+  // форма загрузки
+  var imageForm = document.querySelector('#upload-select-image');
+  // поле загрузки файла
+  var aploadFile = imageForm.querySelector('#upload-file');
+  // форма кадрирования изображения
+  var uploadOverlay = imageForm.querySelector('.upload-overlay');
   // открытие формы кадрирования
-  window.aploadFile.addEventListener('change', function () {
-    window.uploadOverlay.classList.remove('hidden');
+  aploadFile.addEventListener('change', function () {
+    uploadOverlay.classList.remove('hidden');
     document.addEventListener('keydown', window.overlayEscHandler);
   });
   // закрытие формы кадрирования
-  var formCancel = window.imageForm.querySelector('.upload-form-cancel');
+  var formCancel = imageForm.querySelector('.upload-form-cancel');
   formCancel.addEventListener('click', function () {
-    window.uploadOverlay.classList.add('hidden');
+    uploadOverlay.classList.add('hidden');
     document.removeEventListener('keydown', window.overlayEscHandler);
   });
+  // общая функция закрыть окно
+  window.overlayCloseHandler = function () {
+    uploadOverlay.classList.add('hidden');
+    window.galleryOverlay.classList.add('hidden');
+    document.removeEventListener('keydown', window.overlayEscHandler);
+  };
   // отмена Esc при фокусе на комментарии
-  var comment = window.uploadOverlay.querySelector('.upload-form-description');
+  var comment = uploadOverlay.querySelector('.upload-form-description');
   comment.addEventListener('focus', function () {
     document.removeEventListener('keydown', window.overlayEscHandler);
   });
@@ -77,5 +89,5 @@
       evt.preventDefault();
     }
   };
-  window.imageForm.addEventListener('submit', submitFormHandler);
+  imageForm.addEventListener('submit', submitFormHandler);
 })();
