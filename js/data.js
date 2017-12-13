@@ -19,7 +19,7 @@
     [userComments[getRandom(0, userComments.length)], userComments[getRandom(0, userComments.length)]]
   ];
   // массив фотографий пользователей, вкл лайки, комментарии и фото
-  var getPhotos = function (value) {
+  window.getPhotos = function (value) {
     var photos = [];
     for (var i = 0; i < value; i++) {
       photos.push({
@@ -30,5 +30,4 @@
     }
     return photos;
   };
-  window.userPhotos = getPhotos(25);
 })();

@@ -9,6 +9,12 @@
     window.galleryOverlay.querySelector('.likes-count').textContent = photo.likes;
     window.galleryOverlay.querySelector('.comments-count').textContent = photo.comments.length;
   };
+  // функция закрыть окно
+  window.overlayCloseHandler = function () {
+    window.galleryOverlay.classList.add('hidden');
+    window.uploadOverlay.classList.add('hidden');
+    document.removeEventListener('keydown', window.overlayEscHandler);
+  };
   // закрыть окно кликом
   var closeGallary = window.galleryOverlay.querySelector('.gallery-overlay-close');
   closeGallary.addEventListener('click', window.overlayCloseHandler);
