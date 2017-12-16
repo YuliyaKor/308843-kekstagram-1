@@ -30,33 +30,24 @@
   // картинка
   var imagePreview = document. querySelector('.effect-image-preview');
   // делегирование эффектов
-  fieldsetEffect.addEventListener('change', function (evt) {
-    var target = evt.target.value;
+  var getEffect = function (target) {
     imagePreview.className = 'effect-image-preview effect-' + target + '';
+    imagePreview.style = target;
     radioButton.style.left = '0px';
     radioButtonLine.style.width = '0px';
-    imagePreview.style = target;
     radioLine.classList.remove('hidden');
-    if (target === 'none') {
+    if (imagePreview.className === 'effect-image-preview effect-none') {
       radioLine.classList.add('hidden');
     }
-  });
+  };
+  window.initializeFilters(fieldsetEffect, getEffect);
   // изменение масштаба изображения
-  var buttonSmall = document.querySelector('.upload-resize-controls-button-dec');
-  var buttonBig = document.querySelector('.upload-resize-controls-button-inc');
-  var buttonValue = document.querySelector('.upload-resize-controls-value');
-  buttonSmall.addEventListener('click', function () {
-    if (parseFloat(buttonValue.value) > +buttonValue.min) {
-      buttonValue.value = '' + (parseFloat(buttonValue.value) - buttonValue.step) + '%';
-      imagePreview.style = 'transform: scale(' + parseFloat(buttonValue.value) / buttonValue.max + ')';
-    }
-  });
-  buttonBig.addEventListener('click', function () {
-    if (parseFloat(buttonValue.value) < +buttonValue.max) {
-      buttonValue.value = '' + (parseFloat(buttonValue.value) + +buttonValue.step) + '%';
-      imagePreview.style = 'transform: scale(' + parseFloat(buttonValue.value) / buttonValue.max + ')';
-    }
-  });
+  var scaleButtons = document.querySelector('.upload-resize-controls');
+  var scaleSize = function (value) {
+    var index = 100;
+    imagePreview.style = 'transform: scale(' + parseFloat(value) / index + ')';
+  };
+  window.initializeScale(scaleButtons, scaleSize);
   // валидация формы!!!!!
   var teg = document.querySelector('.upload-form-hashtags');
   var hashtagsValid = function () {
@@ -118,19 +109,21 @@
         radioButtonLine.style.width = presentX + 'px';
       }
       var getPreviewEffect = function () {
-        if (imagePreview.className === 'effect-image-preview effect-chrome') {
-          imagePreview.style = 'filter: grayscale(' + presentX / xMax + ');';
-        } else if (imagePreview.className === 'effect-image-preview effect-sepia') {
-          imagePreview.style = 'filter: sepia(' + presentX / xMax + ');';
-        } else if (imagePreview.className === 'effect-image-preview effect-marvin') {
-          imagePreview.style = 'filter: invert(' + presentX * 100 / xMax + '%);';
-        } else if (imagePreview.className === 'effect-image-preview effect-phobos') {
-          imagePreview.style = 'filter: blur(' + presentX * 3 / xMax + 'px);';
-        } else if (imagePreview.className === 'effect-image-preview effect-heat') {
-          imagePreview.style = 'filter: brightness(' + presentX * 3 / xMax + ');';
+        switch (imagePreview.className) {
+          case 'effect-image-preview effect-chrome':
+            return 'filter: grayscale(' + presentX / xMax + ');';
+          case 'effect-image-preview effect-sepia':
+            return 'filter: sepia(' + presentX / xMax + ');';
+          case 'effect-image-preview effect-marvin':
+            return 'filter: invert(' + presentX * 100 / xMax + '%);';
+          case 'effect-image-preview effect-phobos':
+            return 'filter: blur(' + presentX * 3 / xMax + 'px);';
+          case 'effect-image-preview effect-heat':
+            return 'filter: brightness(' + presentX * 3 / xMax + ');';
         }
+        return '';
       };
-      getPreviewEffect();
+      imagePreview.style = getPreviewEffect();
     };
 
     var mouseUpHandler = function (upEvt) {
