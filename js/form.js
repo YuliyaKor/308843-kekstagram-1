@@ -39,11 +39,11 @@
   // картинка
   var imagePreview = document. querySelector('.effect-image-preview');
   // делегирование эффектов
-  var getEffect = function (target) {
-    imagePreview.className = 'effect-image-preview effect-' + target + '';
-    imagePreview.style = target;
-    radioButton.style.left = '0px';
-    radioButtonLine.style.width = '0px';
+  var getEffect = function (effect) {
+    imagePreview.className = 'effect-image-preview effect-' + effect + '';
+    imagePreview.style.filter = '';
+    radioButton.style.left = '100%';
+    radioButtonLine.style.width = '100%';
     radioLine.classList.remove('hidden');
     if (imagePreview.className === 'effect-image-preview effect-none') {
       radioLine.classList.add('hidden');
@@ -98,6 +98,7 @@
   var radioButtonLine = radioLine.querySelector('.upload-effect-level-val');
   radioButton.addEventListener('mousedown', function (evt) {
     evt.preventDefault();
+    var selectedEffectRadio = document.querySelector('input[name="effect"]:checked');
     var start = {
       x: evt.clientX
     };
@@ -117,22 +118,7 @@
         radioButton.style.left = presentX + 'px';
         radioButtonLine.style.width = presentX + 'px';
       }
-      var getPreviewEffect = function () {
-        switch (imagePreview.className) {
-          case 'effect-image-preview effect-chrome':
-            return 'filter: grayscale(' + presentX / xMax + ');';
-          case 'effect-image-preview effect-sepia':
-            return 'filter: sepia(' + presentX / xMax + ');';
-          case 'effect-image-preview effect-marvin':
-            return 'filter: invert(' + presentX * 100 / xMax + '%);';
-          case 'effect-image-preview effect-phobos':
-            return 'filter: blur(' + presentX * 3 / xMax + 'px);';
-          case 'effect-image-preview effect-heat':
-            return 'filter: brightness(' + presentX * 3 / xMax + ');';
-        }
-        return '';
-      };
-      imagePreview.style = getPreviewEffect();
+      imagePreview.style.filter = getPreviewEffect(selectedEffectRadio.value, presentX / xMax);
     };
 
     var mouseUpHandler = function (upEvt) {
@@ -145,4 +131,15 @@
     document.addEventListener('mousemove', mouseMoveHandler);
     document.addEventListener('mouseup', mouseUpHandler);
   });
+
+  var getPreviewEffect = function (effect, value) {
+    switch (effect) {
+      case 'chrome': return 'grayscale(' + value + ')';
+      case 'sepia': return 'sepia(' + value + ')';
+      case 'marvin': return 'invert(' + value * 100 + '%)';
+      case 'phobos': return 'blur(' + value * 3 + 'px)';
+      case 'heat': return 'brightness(' + value * 3 + ')';
+      default: return '';
+    }
+  };
 })();

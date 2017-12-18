@@ -4,17 +4,20 @@
     var MAX = 100;
     var STEP = 25;
     var buttonSmall = buttonField.querySelector('.upload-resize-controls-button-dec');
-    var buttonBig = buttonField.querySelector('.upload-resize-controls-button-inc');
+    // var buttonBig = buttonField.querySelector('.upload-resize-controls-button-inc');
     var buttonValue = buttonField.querySelector('.upload-resize-controls-value');
 
     buttonField.addEventListener('click', function (evt) {
       var target = evt.target;
-      if (target === buttonSmall && parseFloat(buttonValue.value) > STEP) {
-        buttonValue.value = '' + (parseFloat(buttonValue.value) - STEP) + '%';
-      } else if (target === buttonBig && parseFloat(buttonValue.value) < MAX) {
-        buttonValue.value = '' + (parseFloat(buttonValue.value) + STEP) + '%';
+      var mark = 1;
+      if (target === buttonSmall) {
+        mark = -1;
       }
-      transformStyle(buttonValue.value);
+      var value = parseInt(buttonValue.value, 10) + STEP * mark;
+      if (value <= MAX && value >= STEP) {
+        buttonValue.value = value + '%';
+        transformStyle(buttonValue.value);
+      }
     });
   };
 })();
