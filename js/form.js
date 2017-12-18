@@ -30,33 +30,24 @@
   // картинка
   var imagePreview = document. querySelector('.effect-image-preview');
   // делегирование эффектов
-  fieldsetEffect.addEventListener('change', function (evt) {
-    var target = evt.target.value;
-    imagePreview.className = 'effect-image-preview effect-' + target + '';
-    radioButton.style.left = '0px';
-    radioButtonLine.style.width = '0px';
-    imagePreview.style = target;
+  var getEffect = function (effect) {
+    imagePreview.className = 'effect-image-preview effect-' + effect + '';
+    imagePreview.style.filter = '';
+    radioButton.style.left = '100%';
+    radioButtonLine.style.width = '100%';
     radioLine.classList.remove('hidden');
-    if (target === 'none') {
+    if (imagePreview.className === 'effect-image-preview effect-none') {
       radioLine.classList.add('hidden');
     }
-  });
+  };
+  window.initializeFilters(fieldsetEffect, getEffect);
   // изменение масштаба изображения
-  var buttonSmall = document.querySelector('.upload-resize-controls-button-dec');
-  var buttonBig = document.querySelector('.upload-resize-controls-button-inc');
-  var buttonValue = document.querySelector('.upload-resize-controls-value');
-  buttonSmall.addEventListener('click', function () {
-    if (parseFloat(buttonValue.value) > +buttonValue.min) {
-      buttonValue.value = '' + (parseFloat(buttonValue.value) - buttonValue.step) + '%';
-      imagePreview.style = 'transform: scale(' + parseFloat(buttonValue.value) / buttonValue.max + ')';
-    }
-  });
-  buttonBig.addEventListener('click', function () {
-    if (parseFloat(buttonValue.value) < +buttonValue.max) {
-      buttonValue.value = '' + (parseFloat(buttonValue.value) + +buttonValue.step) + '%';
-      imagePreview.style = 'transform: scale(' + parseFloat(buttonValue.value) / buttonValue.max + ')';
-    }
-  });
+  var scaleButtons = document.querySelector('.upload-resize-controls');
+  var scaleSize = function (value) {
+    var index = 100;
+    imagePreview.style = 'transform: scale(' + parseFloat(value) / index + ')';
+  };
+  window.initializeScale(scaleButtons, scaleSize);
   // валидация формы!!!!!
   var teg = document.querySelector('.upload-form-hashtags');
   var hashtagsValid = function () {
@@ -98,6 +89,7 @@
   var radioButtonLine = radioLine.querySelector('.upload-effect-level-val');
   radioButton.addEventListener('mousedown', function (evt) {
     evt.preventDefault();
+    var selectedEffectRadio = document.querySelector('input[name="effect"]:checked');
     var start = {
       x: evt.clientX
     };
@@ -117,20 +109,7 @@
         radioButton.style.left = presentX + 'px';
         radioButtonLine.style.width = presentX + 'px';
       }
-      var getPreviewEffect = function () {
-        if (imagePreview.className === 'effect-image-preview effect-chrome') {
-          imagePreview.style = 'filter: grayscale(' + presentX / xMax + ');';
-        } else if (imagePreview.className === 'effect-image-preview effect-sepia') {
-          imagePreview.style = 'filter: sepia(' + presentX / xMax + ');';
-        } else if (imagePreview.className === 'effect-image-preview effect-marvin') {
-          imagePreview.style = 'filter: invert(' + presentX * 100 / xMax + '%);';
-        } else if (imagePreview.className === 'effect-image-preview effect-phobos') {
-          imagePreview.style = 'filter: blur(' + presentX * 3 / xMax + 'px);';
-        } else if (imagePreview.className === 'effect-image-preview effect-heat') {
-          imagePreview.style = 'filter: brightness(' + presentX * 3 / xMax + ');';
-        }
-      };
-      getPreviewEffect();
+      imagePreview.style.filter = getPreviewEffect(selectedEffectRadio.value, presentX / xMax);
     };
 
     var mouseUpHandler = function (upEvt) {
@@ -143,4 +122,15 @@
     document.addEventListener('mousemove', mouseMoveHandler);
     document.addEventListener('mouseup', mouseUpHandler);
   });
+
+  var getPreviewEffect = function (effect, value) {
+    switch (effect) {
+      case 'chrome': return 'grayscale(' + value + ')';
+      case 'sepia': return 'sepia(' + value + ')';
+      case 'marvin': return 'invert(' + value * 100 + '%)';
+      case 'phobos': return 'blur(' + value * 3 + 'px)';
+      case 'heat': return 'brightness(' + value * 3 + ')';
+      default: return '';
+    }
+  };
 })();
