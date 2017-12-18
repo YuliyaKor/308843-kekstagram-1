@@ -4,10 +4,9 @@
   var ESC_KEYCODE = 27;
   // элемент
   var similarPictureElement = document.querySelector('.pictures');
-  // получение фотографий
-  var userPhotos = window.getPhotos(25);
+
   // заполнение блока
-  var loadHandler = function () {
+  var loadHandler = function (userPhotos) {
     var fragment = document.createDocumentFragment();
     for (var i = 0; i < userPhotos.length; i++) {
       var pictureOne = window.getPicture(userPhotos[i]);
@@ -27,7 +26,7 @@
     document.body.insertAdjacentElement('afterbegin', message);
   };
 
-  window.load(loadHandler, window.errorHandler);
+  window.backend.load(loadHandler, window.errorHandler);
   // закрыть окно Esc
   window.overlayEscHandler = function (evt) {
     if (evt.keyCode === ESC_KEYCODE) {
