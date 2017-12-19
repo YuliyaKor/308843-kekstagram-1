@@ -3,11 +3,28 @@
   // форма загрузки
   var imageForm = document.querySelector('#upload-select-image');
   // поле загрузки файла
-  var aploadFile = imageForm.querySelector('#upload-file');
+  var uploadFile = imageForm.querySelector('#upload-file');
+  // поле с тегами
+  var tag = document.querySelector('.upload-form-hashtags');
   // форма кадрирования изображения
   window.uploadOverlay = imageForm.querySelector('.upload-overlay');
+  // отправка формы на сервер
+  var successSendHandler = function () {
+    imageForm.reset();
+    window.uploadOverlay.classList.add('hidden');
+  };
+
+  imageForm.addEventListener('submit', function (evt) {
+    evt.preventDefault();
+    if (hashtagsValid() === true) {
+      tag.style.borderColor = 'red';
+    } else {
+      window.backend.save(new FormData(imageForm), successSendHandler, window.errorHandler);
+    }
+  });
+
   // открытие формы кадрирования
-  aploadFile.addEventListener('change', function () {
+  uploadFile.addEventListener('change', function () {
     window.uploadOverlay.classList.remove('hidden');
     document.addEventListener('keydown', window.overlayEscHandler);
   });
@@ -49,25 +66,24 @@
   };
   window.initializeScale(scaleButtons, scaleSize);
   // валидация формы!!!!!
-  var teg = document.querySelector('.upload-form-hashtags');
   var hashtagsValid = function () {
-    if (teg.value.length === 0) {
+    if (tag.value.length === 0) {
       return false;
     }
-    var tegSplit = teg.value.split(' ');
-    var teglength = tegSplit.length;
-    if (teglength > 5) {
+    var tagSplit = tag.value.split(' ');
+    var taglength = tagSplit.length;
+    if (taglength > 5) {
       return true;
     }
-    for (var i = 0; i < teglength; i++) {
-      if (tegSplit[i][0] !== '#') {
+    for (var i = 0; i < taglength; i++) {
+      if (tagSplit[i][0] !== '#') {
         return true;
       }
-      if (tegSplit[i].length > 20) {
+      if (tagSplit[i].length > 20) {
         return true;
       }
       for (var j = 0; j < length; j++) {
-        if (tegSplit[i].toLowerCase() === tegSplit[j].toLowerCase() && i !== j) {
+        if (tagSplit[i].toLowerCase() === tagSplit[j].toLowerCase() && i !== j) {
           return true;
         }
       }
@@ -75,13 +91,6 @@
     return false;
   };
 
-  var submitFormHandler = function (evt) {
-    if (hashtagsValid() === true) {
-      teg.style.borderColor = 'red';
-      evt.preventDefault();
-    }
-  };
-  imageForm.addEventListener('submit', submitFormHandler);
   // поле с бегунком
   var radioLine = imageForm.querySelector('.upload-effect-level');
   // кнопка бегунка
