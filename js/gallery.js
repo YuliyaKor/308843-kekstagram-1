@@ -1,9 +1,9 @@
 'use strict';
 (function () {
-  // обозначение клавиш
   var ESC_KEYCODE = 27;
+  var DEBOUNCE_TIME = 500;
   // элемент
-  var similarPictureElement = document.querySelector('.pictures');
+  var picturesElement = document.querySelector('.pictures');
 
   var photos = [];
   // заполнение блока
@@ -12,11 +12,13 @@
     renderPictures(photos);
     filtersElement.classList.remove('hidden');
   };
+
   var removeOldPictures = function () {
-    var newPictureContainer = similarPictureElement.cloneNode();
-    document.body.replaceChild(newPictureContainer, similarPictureElement);
-    similarPictureElement = newPictureContainer;
+    var newPicturesElement = picturesElement.cloneNode();
+    document.body.replaceChild(newPicturesElement, picturesElement);
+    picturesElement = newPicturesElement;
   };
+
   var renderPictures = function (userPhotos) {
     removeOldPictures();
     var fragment = document.createDocumentFragment();
@@ -24,25 +26,21 @@
       var pictureOne = window.getPicture(userPhotos[i]);
       fragment.appendChild(pictureOne);
     }
-    similarPictureElement.appendChild(fragment);
+    picturesElement.appendChild(fragment);
   };
+
   window.errorHandler = function (errorMessage) {
-    var message = document.createElement('div');
-    message.style = 'z-index: 100; margin: 10% auto; text-align: center; background-color: blue;';
-    message.style.position = 'absolute';
-    message.style.left = 0;
-    message.style.border = '7px solid red';
-    message.style.right = 0;
-    message.style.fontSize = '50px';
-    message.textContent = errorMessage;
-    document.body.insertAdjacentElement('afterbegin', message);
+    var messageElement = document.createElement('div');
+    messageElement.className = 'errorMessage';
+    messageElement.textContent = errorMessage;
+    document.body.insertAdjacentElement('afterbegin', messageElement);
   };
 
   window.backend.load(loadHandler, window.errorHandler);
   // закрыть окно Esc
   window.overlayEscHandler = function (evt) {
     if (evt.keyCode === ESC_KEYCODE) {
-      window.overlayCloseHandler();
+      window.preview.overlayCloseHandler();
     }
   };
   // блок сортировки
@@ -66,11 +64,23 @@
           return Math.random() - 0.5;
         });
     }
+
     return photos;
   };
+
   filtersElement.addEventListener('click', function (evt) {
     var sortingFilter = evt.target.value;
+    var sortedPhotos = getSortedPhotos(sortingFilter);
 
-    renderPictures(getSortedPhotos(sortingFilter));
+    debounce(function () {
+      renderPictures(sortedPhotos);
+    });
   });
+  var lastTimeout;
+  var debounce = function (cb) {
+    if (lastTimeout) {
+      clearTimeout(lastTimeout);
+    }
+    setTimeout(cb, DEBOUNCE_TIME);
+  };
 })();

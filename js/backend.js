@@ -24,7 +24,7 @@ window.backend = (function () {
       if (xhr.status === Status.OK) {
         onLoad(xhr.response);
       } else {
-        onError(xhr.statusText);
+        onError('Неизвестная ошибка: ' + xhr.status);
       }
     });
     xhr.addEventListener('timeout', function () {
