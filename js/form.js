@@ -1,98 +1,96 @@
 'use strict';
 (function () {
-  // форма загрузки
-  var imageForm = document.querySelector('#upload-select-image');
-  // поле загрузки файла
-  var uploadFile = imageForm.querySelector('#upload-file');
-  // поле с тегами
-  var tag = document.querySelector('.upload-form-hashtags');
-  // форма кадрирования изображения
-  window.uploadOverlay = imageForm.querySelector('.upload-overlay');
-  // отправка формы на сервер
+  var MAX_TAGS_COUNT = 5;
+  var TAG_MAX_LENGTH = 20;
+  var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
+
+  var imageFormElement = document.querySelector('#upload-select-image');
+  var uploadFileElement = imageFormElement.querySelector('#upload-file');
+  var hashtagsElement = document.querySelector('.upload-form-hashtags');
+  var uploadOverlayElement = imageFormElement.querySelector('.upload-overlay');
+  var effectControlsElement = document.querySelector('.upload-effect-controls');
+  var imagePreviewElement = document.querySelector('.effect-image-preview');
+
   var successSendHandler = function () {
-    imageForm.reset();
-    window.uploadOverlay.classList.add('hidden');
+    imageFormElement.reset();
+    uploadOverlayElement.classList.add('hidden');
+    imagePreviewElement.className = 'effect-image-preview';
   };
 
-  imageForm.addEventListener('submit', function (evt) {
+  imageFormElement.addEventListener('submit', function (evt) {
     evt.preventDefault();
-    if (hashtagsValid() === true) {
-      tag.style.borderColor = 'red';
+    if (!isFormValid()) {
+      hashtagsElement.style.borderColor = 'red';
     } else {
-      window.backend.save(new FormData(imageForm), successSendHandler, window.errorHandler);
+      window.backend.save(new FormData(imageFormElement), successSendHandler, window.errorHandler);
     }
   });
-
   // открытие формы кадрирования
-  uploadFile.addEventListener('change', function () {
-    window.uploadOverlay.classList.remove('hidden');
+  uploadFileElement.addEventListener('change', function () {
+    uploadOverlayElement.classList.remove('hidden');
     document.addEventListener('keydown', window.overlayEscHandler);
   });
   // закрытие формы кадрирования
-  var formCancel = imageForm.querySelector('.upload-form-cancel');
+  var formCancel = imageFormElement.querySelector('.upload-form-cancel');
   formCancel.addEventListener('click', function () {
-    window.uploadOverlay.classList.add('hidden');
+    uploadOverlayElement.classList.add('hidden');
     document.removeEventListener('keydown', window.overlayEscHandler);
   });
   // отмена Esc при фокусе на комментарии
-  var comment = window.uploadOverlay.querySelector('.upload-form-description');
+  var comment = uploadOverlayElement.querySelector('.upload-form-description');
   comment.addEventListener('focus', function () {
     document.removeEventListener('keydown', window.overlayEscHandler);
   });
   comment.addEventListener('blur', function () {
     document.addEventListener('keydown', window.overlayEscHandler);
   });
-  // поле с эффектами
-  var fieldsetEffect = document.querySelector('.upload-effect-controls');
-  // картинка
-  var imagePreview = document. querySelector('.effect-image-preview');
   // делегирование эффектов
   var getEffect = function (effect) {
-    imagePreview.className = 'effect-image-preview effect-' + effect + '';
-    imagePreview.style.filter = '';
+    imagePreviewElement.className = 'effect-image-preview effect-' + effect + '';
+    imagePreviewElement.style.filter = '';
     radioButton.style.left = '100%';
     radioButtonLine.style.width = '100%';
     radioLine.classList.remove('hidden');
-    if (imagePreview.className === 'effect-image-preview effect-none') {
+    if (imagePreviewElement.className === 'effect-image-preview effect-none') {
       radioLine.classList.add('hidden');
     }
   };
-  window.initializeFilters(fieldsetEffect, getEffect);
+  window.initializeFilters(effectControlsElement, getEffect);
   // изменение масштаба изображения
   var scaleButtons = document.querySelector('.upload-resize-controls');
   var scaleSize = function (value) {
     var index = 100;
-    imagePreview.style = 'transform: scale(' + parseFloat(value) / index + ')';
+    imagePreviewElement.style = 'transform: scale(' + parseFloat(value) / index + ')';
   };
   window.initializeScale(scaleButtons, scaleSize);
   // валидация формы!!!!!
-  var hashtagsValid = function () {
-    if (tag.value.length === 0) {
-      return false;
-    }
-    var tagSplit = tag.value.split(' ');
-    var taglength = tagSplit.length;
-    if (taglength > 5) {
+  var isFormValid = function () {
+    if (hashtagsElement.value.length === 0) {
       return true;
     }
-    for (var i = 0; i < taglength; i++) {
+    var tagSplit = hashtagsElement.value.split(' ');
+    var tagLength = tagSplit.length;
+    if (tagLength > MAX_TAGS_COUNT) {
+      return false;
+    }
+    for (var i = 0; i < tagLength; i++) {
       if (tagSplit[i][0] !== '#') {
-        return true;
+        return false;
       }
-      if (tagSplit[i].length > 20) {
-        return true;
+      if (tagSplit[i].length > TAG_MAX_LENGTH) {
+        return false;
       }
-      for (var j = 0; j < length; j++) {
+      for (var j = 0; j < tagLength; j++) {
         if (tagSplit[i].toLowerCase() === tagSplit[j].toLowerCase() && i !== j) {
-          return true;
+          return false;
         }
       }
     }
-    return false;
+    return true;
   };
 
   // поле с бегунком
-  var radioLine = imageForm.querySelector('.upload-effect-level');
+  var radioLine = imageFormElement.querySelector('.upload-effect-level');
   // кнопка бегунка
   var radioButton = radioLine.querySelector('.upload-effect-level-pin');
   var radioButtonLine = radioLine.querySelector('.upload-effect-level-val');
@@ -118,7 +116,7 @@
         radioButton.style.left = presentX + 'px';
         radioButtonLine.style.width = presentX + 'px';
       }
-      imagePreview.style.filter = getPreviewEffect(selectedEffectRadio.value, presentX / xMax);
+      imagePreviewElement.style.filter = getPreviewEffect(selectedEffectRadio.value, presentX / xMax);
     };
 
     var mouseUpHandler = function (upEvt) {
@@ -142,4 +140,22 @@
       default: return '';
     }
   };
+  //  загрузка изображения
+  var fileSelection = document.querySelector('.upload-image input[type=file]');
+
+  fileSelection.addEventListener('change', function () {
+    var file = fileSelection.files[0];
+    var fileName = file.name.toLowerCase();
+    var isImageFile = FILE_TYPES.some(function (it) {
+      return fileName.endsWith(it);
+    });
+
+    if (isImageFile) {
+      var reader = new FileReader();
+      reader.addEventListener('load', function () {
+        imagePreviewElement.src = reader.result;
+      });
+      reader.readAsDataURL(file);
+    }
+  });
 })();

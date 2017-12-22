@@ -865,3 +865,15 @@ input[type=radio]:checked + .upload-effect-label .upload-effect-preview {
 .footer-social-item-vk {
   background-position: -84px 0;
 }
+
+.errorMessage {
+  z-index: 100;
+  margin: 10% auto;
+  text-align: center;
+  background-color: blue;
+  position: absolute;
+  left: 0;
+  border: 7px solid red;
+  right: 0;
+  fontSize: 50px;
+}
