@@ -1,5 +1,5 @@
 'use strict';
-window.backend = (function () {
+(function () {
   var SERVER_URL = 'https://1510.dump.academy/kekstagram';
   var TIMEOUT = 10000;
   var Status = {
@@ -32,7 +32,7 @@ window.backend = (function () {
     });
     return xhr;
   };
-  return {
+  window.backend = {
     load: function (onLoad, onError) {
       var xhr = setup(onLoad, onError);
 

@@ -1,6 +1,5 @@
 'use strict';
 (function () {
-  var ESC_KEYCODE = 27;
   var DEBOUNCE_TIME = 500;
   // элемент
   var picturesElement = document.querySelector('.pictures');
@@ -22,26 +21,23 @@
   var renderPictures = function (userPhotos) {
     removeOldPictures();
     var fragment = document.createDocumentFragment();
-    for (var i = 0; i < userPhotos.length; i++) {
-      var pictureOne = window.getPicture(userPhotos[i]);
+
+    userPhotos.forEach(function (photo) {
+      var pictureOne = window.getPicture(photo);
       fragment.appendChild(pictureOne);
-    }
+    });
+
     picturesElement.appendChild(fragment);
   };
 
   window.errorHandler = function (errorMessage) {
-    var messageElement = document.createElement('div');
-    messageElement.className = 'errorMessage';
-    messageElement.textContent = errorMessage;
-    document.body.insertAdjacentElement('afterbegin', messageElement);
+    window.showError(errorMessage);
   };
 
   window.backend.load(loadHandler, window.errorHandler);
   // закрыть окно Esc
   window.overlayEscHandler = function (evt) {
-    if (evt.keyCode === ESC_KEYCODE) {
-      window.preview.overlayCloseHandler();
-    }
+    window.handlers.pressEscHandler(evt, window.preview.overlayCloseHandler);
   };
   // блок сортировки
   var filtersElement = document.querySelector('.filters');
@@ -68,7 +64,7 @@
     return photos;
   };
 
-  filtersElement.addEventListener('click', function (evt) {
+  filtersElement.addEventListener('change', function (evt) {
     var sortingFilter = evt.target.value;
     var sortedPhotos = getSortedPhotos(sortingFilter);
 
