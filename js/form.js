@@ -5,36 +5,33 @@
   var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
 
   var imageFormElement = document.querySelector('#upload-select-image');
-  var uploadFileElement = imageFormElement.querySelector('#upload-file');
   var hashtagsElement = document.querySelector('.upload-form-hashtags');
   var uploadOverlayElement = imageFormElement.querySelector('.upload-overlay');
   var effectControlsElement = document.querySelector('.upload-effect-controls');
   var imagePreviewElement = document.querySelector('.effect-image-preview');
 
   var successSendHandler = function () {
+    resetForm();
+  };
+  var resetForm = function () {
     imageFormElement.reset();
     uploadOverlayElement.classList.add('hidden');
     imagePreviewElement.className = 'effect-image-preview';
+    imagePreviewElement.src = '';
+    document.removeEventListener('keydown', closeFormEscHandler);
   };
-
   imageFormElement.addEventListener('submit', function (evt) {
     evt.preventDefault();
-    if (!isFormValid()) {
+    if (!validateForm()) {
       hashtagsElement.style.borderColor = 'red';
     } else {
       window.backend.save(new FormData(imageFormElement), successSendHandler, window.errorHandler);
     }
   });
-  // открытие формы кадрирования
-  uploadFileElement.addEventListener('change', function () {
-    uploadOverlayElement.classList.remove('hidden');
-    document.addEventListener('keydown', window.overlayEscHandler);
-  });
   // закрытие формы кадрирования
   var formCancel = imageFormElement.querySelector('.upload-form-cancel');
   formCancel.addEventListener('click', function () {
-    uploadOverlayElement.classList.add('hidden');
-    document.removeEventListener('keydown', window.overlayEscHandler);
+    resetForm();
   });
   // отмена Esc при фокусе на комментарии
   var comment = uploadOverlayElement.querySelector('.upload-form-description');
@@ -64,26 +61,20 @@
   };
   window.initializeScale(scaleButtons, scaleSize);
   // валидация формы!!!!!
-  var isFormValid = function () {
-    if (hashtagsElement.value.length === 0) {
+  var validateForm = function () {
+    var value = hashtagsElement.value;
+    if (value === '') {
       return true;
     }
-    var tagSplit = hashtagsElement.value.split(' ');
+    value = value.toLowerCase();
+    var tagSplit = value.split(' ');
     var tagLength = tagSplit.length;
     if (tagLength > MAX_TAGS_COUNT) {
       return false;
     }
     for (var i = 0; i < tagLength; i++) {
-      if (tagSplit[i][0] !== '#') {
+      if (tagSplit[i][0] !== '#' || tagSplit[i].length > TAG_MAX_LENGTH || tagSplit.indexOf(tagSplit[i], i + 1) !== -1) {
         return false;
-      }
-      if (tagSplit[i].length > TAG_MAX_LENGTH) {
-        return false;
-      }
-      for (var j = 0; j < tagLength; j++) {
-        if (tagSplit[i].toLowerCase() === tagSplit[j].toLowerCase() && i !== j) {
-          return false;
-        }
       }
     }
     return true;
@@ -140,22 +131,31 @@
       default: return '';
     }
   };
+  var closeFormEscHandler = function (evt) {
+    window.handlers.pressEscHandler(evt, resetForm);
+  };
   //  загрузка изображения
   var fileSelection = document.querySelector('.upload-image input[type=file]');
 
   fileSelection.addEventListener('change', function () {
     var file = fileSelection.files[0];
-    var fileName = file.name.toLowerCase();
-    var isImageFile = FILE_TYPES.some(function (it) {
-      return fileName.endsWith(it);
-    });
-
-    if (isImageFile) {
-      var reader = new FileReader();
-      reader.addEventListener('load', function () {
-        imagePreviewElement.src = reader.result;
+    if (file) {
+      var fileName = file.name.toLowerCase();
+      var isImageFile = FILE_TYPES.some(function (it) {
+        return fileName.endsWith(it);
       });
-      reader.readAsDataURL(file);
+
+      if (isImageFile) {
+        var reader = new FileReader();
+        reader.addEventListener('load', function () {
+          imagePreviewElement.src = reader.result;
+          uploadOverlayElement.classList.remove('hidden');
+          document.addEventListener('keydown', closeFormEscHandler);
+        });
+        reader.readAsDataURL(file);
+      } else {
+        window.errorHandler('Допустимое расширение файла: ' + FILE_TYPES.join(', '));
+      }
     }
   });
 })();

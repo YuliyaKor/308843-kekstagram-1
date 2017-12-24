@@ -1,17 +1,18 @@
 'use strict';
 (function () {
-  var ENTER_KEYCODE = 13;
   var overlayElement = document.querySelector('.gallery-overlay');
+  var imageElement = overlayElement.querySelector('.gallery-overlay-image');
+  var likesElement = overlayElement.querySelector('.likes-count');
+  var commentsElement = overlayElement.querySelector('.comments-count');
   window.preview = {
     fillGalleryOverlay: function (photo) {
-      overlayElement.querySelector('.gallery-overlay-image').src = photo.url;
-      overlayElement.querySelector('.likes-count').textContent = photo.likes;
-      overlayElement.querySelector('.comments-count').textContent = photo.comments.length;
+      imageElement.src = photo.url;
+      likesElement.textContent = photo.likes;
+      commentsElement.textContent = photo.comments.length;
       overlayElement.classList.remove('hidden');
     },
     overlayCloseHandler: function () {
       overlayElement.classList.add('hidden');
-      document.querySelector('.upload-overlay').classList.add('hidden');
       document.removeEventListener('keydown', window.overlayEscHandler);
     }
   };
@@ -20,8 +21,6 @@
   closeElement.addEventListener('click', window.preview.overlayCloseHandler);
   // закрыть окно клавишей
   closeElement.addEventListener('keydown', function (evt) {
-    if (evt.keyCode === ENTER_KEYCODE) {
-      window.preview.overlayCloseHandler();
-    }
+    window.handlers.pressEnterHandler(evt, window.preview.overlayCloseHandler);
   });
 })();
